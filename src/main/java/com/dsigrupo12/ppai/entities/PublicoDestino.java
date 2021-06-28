@@ -2,6 +2,7 @@ package com.dsigrupo12.ppai.entities;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -10,6 +11,7 @@ import javax.persistence.ManyToMany;
 public class PublicoDestino {
 	
 	@Id
+	@Column(name = "publico_destino_id")
 	private int id;
 	
 	private String nombre;

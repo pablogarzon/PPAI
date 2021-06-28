@@ -5,31 +5,48 @@ import java.time.LocalTime;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Exposicion {
 
 	@Id
 	private int id;
-	
+
 	private String nombre;
 	private LocalDate fechaInicio;
 	private LocalDate fechaFin;
 	private LocalTime horaApertura;
 	private LocalTime horaCierre;
 
-	@ManyToMany
-	@JoinTable(name = "exposicion_pd", joinColumns = @JoinColumn(name = "exposicion_id"), inverseJoinColumns = @JoinColumn(name = "pd_id"))
-	private List<PublicoDestino> publicoDestino;
+	@OneToOne
+	@JoinColumn(name = "publico_destino_id")
+	private PublicoDestino publicoDestino;
 
 	@ManyToOne
 	@JoinColumn(name = "nom_sede")
 	private Sede sede;
+
+	@Enumerated(EnumType.STRING)
+	private TipoExposicion tipoExposicion;
+
+	@OneToMany
+	@JoinColumn(name = "detalle_exposicion_id")
+	private List<DetalleExposicion> detallesExposicion;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -70,12 +87,12 @@ public class Exposicion {
 	public void setHoraCierre(LocalTime horaCierre) {
 		this.horaCierre = horaCierre;
 	}
-
-	public List<PublicoDestino> getPublicoDestino() {
+	
+	public PublicoDestino getPublicoDestino() {
 		return publicoDestino;
 	}
 
-	public void setPublicoDestino(List<PublicoDestino> publicoDestino) {
+	public void setPublicoDestino(PublicoDestino publicoDestino) {
 		this.publicoDestino = publicoDestino;
 	}
 
@@ -86,4 +103,29 @@ public class Exposicion {
 	public void setSede(Sede sede) {
 		this.sede = sede;
 	}
+
+	public TipoExposicion getTipoExposicion() {
+		return tipoExposicion;
+	}
+
+	public void setTipoExposicion(TipoExposicion tipoExposicion) {
+		this.tipoExposicion = tipoExposicion;
+	}
+
+	public List<DetalleExposicion> getDetallesExposicion() {
+		return detallesExposicion;
+	}
+
+	public void setDetallesExposicion(List<DetalleExposicion> detallesExposicion) {
+		this.detallesExposicion = detallesExposicion;
+	}
+
+	public Double calcularDuracionEstimada() {
+		Double total = 0.0;
+		for (DetalleExposicion detalleExposicion : detallesExposicion) {
+			total += detalleExposicion.buscarDuracionExtObras();
+		}
+		return total;
+	}
+
 }

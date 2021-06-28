@@ -1,5 +1,6 @@
 package com.dsigrupo12.ppai.controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dsigrupo12.ppai.entities.Escuela;
 import com.dsigrupo12.ppai.entities.EstadoReserva;
+import com.dsigrupo12.ppai.entities.Exposicion;
 import com.dsigrupo12.ppai.entities.Sede;
 import com.dsigrupo12.ppai.entities.TipoVisita;
 import com.dsigrupo12.ppai.repositories.EscuelaRepository;
@@ -71,8 +73,14 @@ public class GestorReservas {
 		return result;
 	}
 	
-	public List<String> buscarExposicionesTemporalesVigentes() {
-		return null;
+	public LocalDateTime obtenerFechaHoraSistema() {
+		return LocalDateTime.now();
+	}
+	
+	public List<Exposicion> buscarExposicionesTemporalesVigentes(Sede seleccionada) {
+		LocalDateTime fechaHoraActual = obtenerFechaHoraSistema();
+		List<Exposicion> etv = seleccionada.getExposicionesTemporalesVigentes(fechaHoraActual);
+		return etv;
 	}
 	
 	public Double calcularDuracionEstimada() {
@@ -96,10 +104,6 @@ public class GestorReservas {
 	}
 	
 	public EstadoReserva buscarEstadoReserva() {
-		return null;
-	}
-	
-	public Long obtenerFechaHoraSistema() {
 		return null;
 	}
 	
