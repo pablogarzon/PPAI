@@ -1,13 +1,18 @@
 package com.dsigrupo12.ppai.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.dsigrupo12.ppai.entities.Escuela;
 import com.dsigrupo12.ppai.entities.EstadoReserva;
+import com.dsigrupo12.ppai.entities.Sede;
+import com.dsigrupo12.ppai.entities.TipoVisita;
 import com.dsigrupo12.ppai.repositories.EscuelaRepository;
 import com.dsigrupo12.ppai.repositories.SedeRepository;
 import com.dsigrupo12.ppai.repositories.TipoVisitaRepository;
@@ -29,12 +34,19 @@ public class GestorReservas {
 	}
 
 	@GetMapping
-	public String opcionRegReservaGuiada() {
-		return "PantallaAdministrarReservas";
+	public ModelAndView opcionRegReservaGuiada(ModelAndView mv) {
+		mv.addObject("escuelas", buscarEscuelas());
+		mv.setViewName("PantallaAdministrarReservas");
+		return mv;
 	}
 
 	public List<String> buscarEscuelas() {
-		return null;
+		List<String> result = new ArrayList<>();
+		for (Escuela escuela : escuelas.findAll()) {
+			result.add(escuela.getNombre());
+		}
+		result.add("test");
+		return result;
 	}
 	
 	public void tomarIngresoCantVisitantes() {
@@ -42,11 +54,21 @@ public class GestorReservas {
 	}
 	
 	public List<String> buscarSede() {
-		return null;
+		List<String> result = new ArrayList<>();
+		for (Sede sede : sedes.findAll()) {
+			result.add(sede.getNombre());
+		}
+		result.add("test");
+		return result;
 	}
 	
 	public List<String> buscarTiposVisita() {
-		return null;
+		List<String> result = new ArrayList<>();
+		for (TipoVisita tv : tipoVisitas.findAll()) {
+			result.add(tv.getNombre());
+		}
+		result.add("test");
+		return result;
 	}
 	
 	public List<String> buscarExposicionesTemporalesVigentes() {
