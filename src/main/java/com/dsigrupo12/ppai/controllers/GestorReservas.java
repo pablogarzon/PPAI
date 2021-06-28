@@ -2,29 +2,37 @@ package com.dsigrupo12.ppai.controllers;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.dsigrupo12.ppai.entities.EstadoReserva;
+import com.dsigrupo12.ppai.repositories.EscuelaRepository;
+import com.dsigrupo12.ppai.repositories.SedeRepository;
+import com.dsigrupo12.ppai.repositories.TipoVisitaRepository;
 
 
 @Controller
 @RequestMapping("/")
 public class GestorReservas {
-
-	/*private EscuelaService escuelaService;
+	
+	private EscuelaRepository escuelas;
+	private SedeRepository sedes;
+	private TipoVisitaRepository tipoVisitas;
 	
 	@Autowired
-	public GestorReservas(EscuelaService escuelaService) {
-		this.escuelaService = escuelaService;
-	}*/
+	public GestorReservas(EscuelaRepository escuelas, SedeRepository sedes, TipoVisitaRepository tipoVisitas) {
+		this.escuelas = escuelas;
+		this.sedes = sedes;
+		this.tipoVisitas = tipoVisitas;
+	}
 
 	@GetMapping
 	public String opcionRegReservaGuiada() {
 		return "PantallaAdministrarReservas";
 	}
-	
+
 	public List<String> buscarEscuelas() {
 		return null;
 	}

@@ -4,11 +4,25 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sede {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+@Entity
+public class Sede {
+	
+	@Id
+	@Column(name = "nom_sede")
 	private String nombre;
+	
 	private int cantMaximaVisitantes;
+	
+	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY)
 	private List<Empleado> empleados;
+	
+	@OneToMany(mappedBy = "sede", fetch = FetchType.EAGER)
 	private List<Exposicion> exposiciones;
 	
 	public String getNombre() {
@@ -35,7 +49,6 @@ public class Sede {
 	public void setExposiciones(List<Exposicion> exposiciones) {
 		this.exposiciones = exposiciones;
 	}
-	
 	
 	public List<Exposicion> getExposicionesTemporalesVigentes(LocalDate fechaInicio, LocalDate fechaFin) {
 		List<Exposicion> exposicionesVigentes = new ArrayList<>();
