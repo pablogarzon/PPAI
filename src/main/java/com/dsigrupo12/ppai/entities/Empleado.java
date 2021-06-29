@@ -1,5 +1,7 @@
 package com.dsigrupo12.ppai.entities;
 
+import java.time.LocalDate;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -29,5 +31,15 @@ public class Empleado {
 
 	public void setSede(Sede sede) {
 		this.sede = sede;
+	}
+
+	public boolean esGuia() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean estaDisponible(LocalDate fechaHoraReserva) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -1,5 +1,6 @@
 package com.dsigrupo12.ppai.entities;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,5 +61,37 @@ public class Sede {
 			}
 		}
 		return exposicionesVigentes;
+	}
+	
+	public Double calcularDuracionEstimada() {
+		Double result = 0.0;
+		
+		for (Exposicion exposicion : this.exposiciones) {
+			result += exposicion.calcularDuracionEstimada();
+		}
+		
+		return result;
+	}
+	public int sumarCantidadVisitantes(LocalDate fechaHoraReserva) {
+		// TODO Auto-generated method stub
+		buscarExposicionesFecha(fechaHoraReserva);
+		
+		return 0;
+	}
+	
+	private List<Exposicion> buscarExposicionesFecha(LocalDate fechaHoraReserva) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List<Empleado> getGuiasDispEnHorario(LocalDate fechaHoraReserva) {
+		// TODO Auto-generated method stub
+		for (Empleado empleado : empleados) {
+			if(empleado.esGuia()) {
+				if (empleado.estaDisponible(fechaHoraReserva)) {
+					
+				}
+			}
+		}
+		return null;
 	}
 }

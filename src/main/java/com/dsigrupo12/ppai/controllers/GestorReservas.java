@@ -1,5 +1,6 @@
 package com.dsigrupo12.ppai.controllers;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dsigrupo12.ppai.entities.Empleado;
 import com.dsigrupo12.ppai.entities.Escuela;
 import com.dsigrupo12.ppai.entities.EstadoReserva;
 import com.dsigrupo12.ppai.entities.Exposicion;
@@ -83,15 +85,21 @@ public class GestorReservas {
 		return etv;
 	}
 	
-	public Double calcularDuracionEstimada() {
-		return null;
+	public Double calcularDuracionEstimada(Sede seleccionada) {
+		return seleccionada.calcularDuracionEstimada(); 
 	}
 	
-	public void VerificarCapacidadMaximaSede() {
-		
+	public boolean VerificarCapacidadMaximaSede(Sede seleccionada, int cantIngresada, LocalDate fechaHoraReserva) {
+		int cantMax = seleccionada.getCantMaximaVisitantes();
+		if(cantMax <= cantIngresada) {
+			int sumaAsistentesOtrasExpoParaLaFecha = seleccionada.sumarCantidadVisitantes(fechaHoraReserva);
+			return sumaAsistentesOtrasExpoParaLaFecha <= cantIngresada;
+		}
+		return false;
 	}
 	
-	public int CalcularCantidadGuiasNecesarios() {
+	public int CalcularCantidadGuiasNecesarios(Sede seleccionada, LocalDate fechaHoraReserva) {
+		List<Empleado> guias = seleccionada.getGuiasDispEnHorario(fechaHoraReserva);
 		return 0;
 	}
 	
