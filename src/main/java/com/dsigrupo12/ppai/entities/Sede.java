@@ -1,7 +1,6 @@
 package com.dsigrupo12.ppai.entities;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +50,10 @@ public class Sede {
 		this.exposiciones = exposiciones;
 	}
 	
-	public List<Exposicion> getExposicionesTemporalesVigentes(LocalDateTime fechaHora) {
+	public List<Exposicion> getExposicionesTemporalesVigentes(LocalDate fecha) {
 		List<Exposicion> exposicionesVigentes = new ArrayList<>();
 		for (Exposicion exposicion: this.exposiciones) {
-			if (exposicion.getFechaInicio().isAfter(fechaHora.toLocalDate())) {
+			if (exposicion.getFechaInicio().isBefore(fecha) && exposicion.getFechaFin().isAfter(fecha)) {
 				if(exposicion.getTipoExposicion() == TipoExposicion.TEMPORAL) {
 					exposicionesVigentes.add(exposicion);
 				}
