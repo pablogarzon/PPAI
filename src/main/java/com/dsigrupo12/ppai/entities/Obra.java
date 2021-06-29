@@ -9,11 +9,11 @@ public class Obra {
 	
 	@Id
 	@Column(name = "id_obra")
-	public int id;
+	private int id;
 	
-	public int codigoSensor;
-	public String nombreObra;
-	public Double duracionExtendida;
+	private int codigoSensor;
+	private String nombreObra;
+	private Double duracionExtendida;
 	
 	public int getId() {
 		return id;

@@ -1,11 +1,9 @@
 package com.dsigrupo12.ppai.entities;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class PublicoDestino {
@@ -18,8 +16,8 @@ public class PublicoDestino {
 	
 	private String caracteristicas;
 	
-	@ManyToMany
-	private List<Exposicion> exposicion;
+	@OneToOne(mappedBy = "publicoDestino")
+	private Exposicion exposicion;
 	
 	
 	public int getId() {
@@ -46,11 +44,11 @@ public class PublicoDestino {
 		this.caracteristicas = caracteristicas;
 	}
 
-	public List<Exposicion> getExposicion() {
+	public Exposicion getExposicion() {
 		return exposicion;
 	}
 
-	public void setExposicion(List<Exposicion> exposicion) {
+	public void setExposicion(Exposicion exposicion) {
 		this.exposicion = exposicion;
 	}
 }
