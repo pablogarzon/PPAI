@@ -1,19 +1,27 @@
 package com.dsigrupo12.ppai.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
-public class TipoVisita {
+public enum TipoVisita {
 	
-	@Id
+	COMPLETA("Completa", "Visita Completa"), POR_EXPOSICION("Por Exposicion", "Visita Por Exposición");
+	
 	private String nombre;
+	
+	private String descripcion;
+
+	TipoVisita(String nombre, String descripcion) {
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+	}
+	
+	public static TipoVisita getByName(String val) {
+		for (TipoVisita e : TipoVisita.values()) {
+			if (e.nombre.equals(val))
+				return e;
+		}
+		return null;
+	}
 
 	public String getNombre() {
 		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
 	}
 }

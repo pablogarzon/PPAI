@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,17 +13,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "exposiciones")
 public class Exposicion {
 
 	@Id
+	@Column(name = "exposicion_id")
 	private int id;
 
 	private String nombre;
+	
 	private LocalDate fechaInicio;
+	
 	private LocalDate fechaFin;
+	
 	private LocalTime horaApertura;
+	
 	private LocalTime horaCierre;
 
 	@OneToOne

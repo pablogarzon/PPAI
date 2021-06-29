@@ -19,7 +19,6 @@ import com.dsigrupo12.ppai.entities.Sede;
 import com.dsigrupo12.ppai.entities.TipoVisita;
 import com.dsigrupo12.ppai.repositories.EscuelaRepository;
 import com.dsigrupo12.ppai.repositories.SedeRepository;
-import com.dsigrupo12.ppai.repositories.TipoVisitaRepository;
 
 
 @Controller
@@ -28,13 +27,13 @@ public class GestorReservas {
 	
 	private EscuelaRepository escuelas;
 	private SedeRepository sedes;
-	private TipoVisitaRepository tipoVisitas;
+	private TipoVisita[] tipoVisitas;
 	
 	@Autowired
-	public GestorReservas(EscuelaRepository escuelas, SedeRepository sedes, TipoVisitaRepository tipoVisitas) {
+	public GestorReservas(EscuelaRepository escuelas, SedeRepository sedes) {
 		this.escuelas = escuelas;
 		this.sedes = sedes;
-		this.tipoVisitas = tipoVisitas;
+		this.tipoVisitas = TipoVisita.values();
 	}
 
 	@GetMapping
@@ -68,7 +67,7 @@ public class GestorReservas {
 	
 	public List<String> buscarTiposVisita() {
 		List<String> result = new ArrayList<>();
-		for (TipoVisita tv : tipoVisitas.findAll()) {
+		for (TipoVisita tv : tipoVisitas) {
 			result.add(tv.getNombre());
 		}
 		result.add("test");

@@ -2,25 +2,29 @@ package com.dsigrupo12.ppai.entities;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
-public class AsignacionVisita {
-
+public class CambioEstado {
+    
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int Id;
-	
-	private LocalDateTime fechaHoraInicio;
-	
+	@Column(name = "cambio_estado_Id")
+    private int Id;
+    
 	private LocalDateTime fechaHoraFin;
-	
-	@OneToOne
-	private Empleado empleado;
+    
+	private LocalDateTime fechaHoraInicio;
+
+    @OneToOne
+	@JoinColumn(name = "Estado_nombre")
+    private EstadoReserva estado;
 
 	public int getId() {
 		return Id;
@@ -28,14 +32,6 @@ public class AsignacionVisita {
 
 	public void setId(int id) {
 		Id = id;
-	}
-
-	public LocalDateTime getFechaHoraInicio() {
-		return fechaHoraInicio;
-	}
-
-	public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
-		this.fechaHoraInicio = fechaHoraInicio;
 	}
 
 	public LocalDateTime getFechaHoraFin() {
@@ -46,11 +42,19 @@ public class AsignacionVisita {
 		this.fechaHoraFin = fechaHoraFin;
 	}
 
-	public Empleado getEmpleado() {
-		return empleado;
+	public LocalDateTime getFechaHoraInicio() {
+		return fechaHoraInicio;
 	}
 
-	public void setEmpleado(Empleado empleado) {
-		this.empleado = empleado;
+	public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
+		this.fechaHoraInicio = fechaHoraInicio;
+	}
+
+	public EstadoReserva getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoReserva estado) {
+		this.estado = estado;
 	}
 }
