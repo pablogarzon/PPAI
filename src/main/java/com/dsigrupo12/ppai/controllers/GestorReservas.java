@@ -79,7 +79,10 @@ public class GestorReservas {
 	}
 	
 	@GetMapping(path = "/exposiciones")
-	public @ResponseBody Map<?, ?> tomarSeleccionTipoVisita(@RequestParam("nombreSede") String nombreSede, @RequestParam("nombreTV") String nombreTV) {
+	public @ResponseBody Map<?, ?> tomarSeleccionTipoVisita(
+			@RequestParam("sede") String nombreSede, 
+			@RequestParam("tv") String nombreTV) {
+		
 		Map<String, List> exposiciones = new HashMap();
 		
 		Sede seleccionada = new Sede();// sedes.findById(nombreSede).get();		
@@ -130,17 +133,46 @@ public class GestorReservas {
 	}
 	
 	@GetMapping(path = "/guias")
-	public void tomarSelecionFechaHoraReserva(Sede seleccionada, int cantIngresada, LocalDate fechaHoraReserva) {
-		Double duracionEstimada = calcularDuracionEstimada(seleccionada);
-		verificarCapacidadMaximaSede(seleccionada, cantIngresada, fechaHoraReserva);
-		calcularCantidadGuiasNecesarios(seleccionada, fechaHoraReserva, duracionEstimada);
+	public @ResponseBody Map<?, ?> tomarSelecionFechaHoraReserva(
+			@RequestParam("sede") String nombreSede, 
+			@RequestParam("cantV") int cantAsistentesIngresada, 
+			@RequestParam("fecha") String fechaIngresada, 
+			@RequestParam("hora") String horaIngresada) {
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		LocalDateTime fechaHoraReserva = LocalDateTime.parse(fechaIngresada + "T" + horaIngresada + ":00");
+		
+		/*Double duracionEstimada = calcularDuracionEstimada(seleccionada);
+		
+		verificarCapacidadMaximaSede(seleccionada, cantAsistentesIngresada, fechaHoraReserva);	
+		
+		int cantGuias = calcularCantidadGuiasNecesarios(seleccionada, cantAsistentesIngresada);		
+		
+		List<Empleado> guias = obtenerGuias(seleccionada, fechaHoraReserva, duracionEstimada);
+		*/
+		
+		int cantGuias = 2;
+		
+		List<String> guias = new ArrayList<>();
+		guias.add("Juan Arango");
+		guias.add("Camila Sierra");
+		guias.add("Jorge Perez");
+		guias.add("Caren Margaretti");
+		guias.add("Antonella Gold");
+		guias.add("Claudio Capputo");
+		
+		result.put("cantidadNecesaria", cantGuias);
+		result.put("guias", guias);
+		
+		return result;
 	}
 	
 	private Double calcularDuracionEstimada(Sede seleccionada) {
 		return seleccionada.calcularDuracionEstimada(); 
 	}
 	
-	private boolean verificarCapacidadMaximaSede(Sede seleccionada, int cantIngresada, LocalDate fechaHoraReserva) {
+	private boolean verificarCapacidadMaximaSede(Sede seleccionada, int cantIngresada, LocalDateTime fechaHoraReserva) {
 		int cantMax = seleccionada.getCantMaximaVisitantes();
 		if(cantMax <= cantIngresada) {
 			int sumaAsistentesOtrasExpoParaLaFecha = seleccionada.sumarCantidadVisitantes(fechaHoraReserva);
@@ -149,9 +181,17 @@ public class GestorReservas {
 		return false;
 	}
 	
-	private int calcularCantidadGuiasNecesarios(Sede seleccionada, LocalDate fechaHoraReserva, Double duracionEstimada) {
-		List<Empleado> guias = seleccionada.getGuiasDispEnHorario(fechaHoraReserva);
+	private int calcularCantidadGuiasNecesarios(Sede seleccionada, int cantAsistentesIngresada) {		
+		
 		return 0;
+	}
+	
+	private List<String> obtenerGuias(Sede seleccionada, LocalDateTime fechaHoraReserva, Double duracionEstimada) {
+		List<String> result = new ArrayList<>();
+		for (Empleado e : seleccionada.getGuiasDispEnHorario(fechaHoraReserva)) {
+			result.add(e.getNombre());
+		}
+		return result;
 	}
 	
 	@PostMapping

@@ -38,7 +38,7 @@
             <div class="field">
                 <label class="label">Ingresar la cantidad de visitantes:</label>
                 <div class="control">
-                    <input class="input" type="number" placeholder="0">
+                    <input class="input" type="number" placeholder="0" id="txtCantidadVisitantes">
                 </div>
             </div>
 
@@ -72,7 +72,7 @@
                         <thead>
                             <tr>
                             	<th>Seleccionar</th>
-                                <th><abbr title="Position">Exposición</abbr></th>
+                                <th>Exposición</th>
                                 <th>Publico Destino</th>
                                 <th>Hora apertura</th>
                                 <th>Hora cierre</th>
@@ -82,12 +82,11 @@
                 </div>
             </div>
 
-
             <div class="field">
                 <label class="label">Ingresar fecha y hora de la visita:</label>
                 <div class="control">
-                    <input class="input" type="date" placeholder="0">
-                    <input class="input" type="time" placeholder="0">
+                    <input class="input" type="date" placeholder="0" id="txtFechaVisita">
+                    <input class="input" type="time" placeholder="0" id="txtHoraVisita">
                 </div>
             </div>
            
@@ -98,31 +97,18 @@
                     <div class="columns">
                         <div class="column is-narrow">
                             <div class="select is-multiple">
-                                <select multiple size="8">
-                                    <option value="Identificaor1">Facundo Almada</option>
-                                    <option value="Identificaor2">Jos&eacute; Suarez</option>
-                                    <option value="Identificaor3">Adriana Rosa</option>
-                                    <option value="Identificaor4">Ana Vel&eacute;z</option>
-                                    <option value="Identificaor5">Ren&eacute; Caceres</option>
-                                    <option value="Identificaor6">Ju&aacute;n Bobadilla</option>
-                                    <option value="Identificaor7">Matias Fisogni</option>
-                                    <option value="Identificaor8">Laura Cueva</option>
-                                    <option value="Identificaor9">Ju&aacute;n Segovia</option>
-                                    <option value="Identificaor10">Marta S&aacute;nchez</option>
-                                    <option value="Identificaor11">Matias Rolando</option>
-                                    <option value="Identificaor12">Felipe Carou</option>
+                                <select multiple size="8" id="cmbGuias">
                                 </select>
                             </div>
                         </div>
                         <div class="column is-narrow">
-                            <button class="button is-small is-fullwidth">&gt;&gt;</button>
-                            <button class="button is-small is-fullwidth">&lt;&lt;</button>
+                            <button class="button is-small is-fullwidth" id="btnAgregarGuia">&gt;&gt;</button>
+                            <button class="button is-small is-fullwidth" id="btnRemoverGuia">&lt;&lt;</button>
                         </div>
                         <div class="column is-narrow">
                             <div class="select is-multiple">
-                                <select multiple size="8">
-                                    <option value="Argentina">Jos&eacute; Bernardi</option>
-                                    <option value="Bolivia">Natalia Jimenez</option>
+                                <select multiple size="8" id="cmbGuiasSeleccionados">
+                                    
                                 </select>
                             </div>
                         </div>
@@ -160,22 +146,21 @@
     </footer>
 
     <script>
-        var $cmbEscuela = null;
-        var $cmbSede = null;
-        var $cmbTiposVisita = null;
+        var $cmbEscuela = $("#cmbEscuela");
+        var $txtCantidadVisitantes = $("#txtCantidadVisitantes");
+        var $cmbSede = $("#cmbSede");
+        var $cmbTiposVisita = $("#cmbTiposVisita");
+        var $txtFechaVisita = $("#txtFechaVisita");
+        var $txtHoraVisita = $("#txtHoraVisita");
+        var $cmbGuias = $("#cmbGuias");
+        var $cmbGuiasSeleccionados = $("#cmbGuiasSeleccionados");
+        var $btnAgregarGuia = $("#btnAgregarGuia");
+        var $btnRemoverGuia = $("#btnRemoverGuia");
         var $tblExposiciones = null;
 
         $(function() {
-            $cmbEscuela = $("#cmbEscuela");
-            $cmbSede = $("#cmbSede");
-            $cmbTiposVisita = $("#cmbTiposVisita");
-
             $cmbTiposVisita.prop("disabled", true);
-
-            $cmbSede.on("change", tomarSeleccionSede);
-
-            $cmbTiposVisita.on("change", tomarSeleccionTipoVisitas);
-
+            
             $tblExposiciones = $("#tblExposiciones").DataTable({
             	searching: false,
                 paging: false,
@@ -195,7 +180,18 @@
                         return '<input type="checkbox" name="id" value="' + data.id + '">';
                     }
                 }]
-            })
+            });
+            
+			$cmbSede.on("change", tomarSeleccionSede);
+            $cmbTiposVisita.on("change", tomarSeleccionTipoVisitas);
+            $txtFechaVisita.on("input", tomarSeleccionFechaHoraReserva);
+            $txtHoraVisita.on("input", tomarSeleccionFechaHoraReserva);
+            $btnAgregarGuia.on("click", function (e) {
+                moverGuias(e, $cmbGuias, $cmbGuiasSeleccionados);
+            });
+            $btnRemoverGuia.on("click", function (e) {
+                moverGuias(e, $cmbGuiasSeleccionados, $cmbGuias);
+            });
         });
 
         function tomarSeleccionSede() {
@@ -203,18 +199,53 @@
         }
 
         function tomarSeleccionTipoVisitas () {
-                var nombreSede = $cmbSede.val();
-                var nombreTV = $cmbTiposVisita.val();
+                var sede = $cmbSede.val();
+                var tv   = $cmbTiposVisita.val();
 
                 $.ajax({
-                    url: "/exposiciones?nombreSede=" + nombreSede + "&nombreTV=" + nombreTV,
+                    url: "/exposiciones?sede=" + sede + "&tv=" + tv ,
                     method: "GET"
-                }).done(function (data) {
-                    $tblExposiciones.clear().draw();
-                    if (!!data.exposiciones.length) {
-                        $tblExposiciones.rows.add(data.exposiciones).draw();    
-                    }
-                })
+                }).done(presentarExposiciones);
+        }
+
+        function presentarExposiciones(data) {
+            $tblExposiciones.clear().draw();
+            if (!!data && !!data.exposiciones.length) {
+                $tblExposiciones.rows.add(data.exposiciones).draw();    
+            }
+        }
+
+        function tomarSeleccionFechaHoraReserva() {
+            var sede = $cmbSede.val();
+            var cantV = $txtCantidadVisitantes.val();
+            var fecha = $txtFechaVisita.val();
+            var hora = $txtHoraVisita.val();
+
+            if (!!fecha && !!hora) {
+                $.ajax({
+                    url: "/guias?sede=" + sede + "&cantV=" + cantV + "&fecha=" + fecha + "&hora=" + hora,
+                    method: "GET"
+                }).done(presentarGuias);    
+            }
+        }
+
+        function presentarGuias(data) {
+            $cmbGuias.empty();
+            for (var i = 0; i < data.guias.length; i++) {
+                $cmbGuias.append('<option value="' + data.guias[i] + '">' + data.guias[i] + '</option>');
+            }
+        }
+
+        function moverGuias(event, $cmb1, $cmb2) {
+            event.preventDefault();
+            var seleccionados = $cmb1.val();
+            if(!!seleccionados && !!seleccionados.length) {
+                for (var i = 0; i < seleccionados.length; i++) {
+                    $cmb2.append('<option value="' + seleccionados[i] + '">' + seleccionados[i] + '</option>');
+                    $cmb1.find('option[value="' + seleccionados[i] + '"]').remove();
+                }
+            }
+            
         }
     </script>
 </body>

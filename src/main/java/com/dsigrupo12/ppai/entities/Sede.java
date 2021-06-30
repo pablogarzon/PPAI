@@ -1,6 +1,7 @@
 package com.dsigrupo12.ppai.entities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,18 +72,18 @@ public class Sede {
 		
 		return result;
 	}
-	public int sumarCantidadVisitantes(LocalDate fechaHoraReserva) {
+	public int sumarCantidadVisitantes(LocalDateTime fechaHoraReserva) {
 		// TODO Auto-generated method stub
 		buscarExposicionesFecha(fechaHoraReserva);
 		
 		return 0;
 	}
 	
-	private List<Exposicion> buscarExposicionesFecha(LocalDate fechaHoraReserva) {
+	private List<Exposicion> buscarExposicionesFecha(LocalDateTime fechaHoraReserva) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public List<Empleado> getGuiasDispEnHorario(LocalDate fechaHoraReserva) {
+	public List<Empleado> getGuiasDispEnHorario(LocalDateTime fechaHoraReserva) {
 		// TODO Auto-generated method stub
 		for (Empleado empleado : empleados) {
 			if(empleado.esGuia()) {

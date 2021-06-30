@@ -1,6 +1,5 @@
 package com.dsigrupo12.ppai.entities;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -153,7 +152,7 @@ public class Empleado {
 		return false;
 	}
 
-	public boolean estaDisponible(LocalDate fechaHoraReserva) {
+	public boolean estaDisponible(LocalDateTime fechaHoraReserva) {
 		// TODO Auto-generated method stub
 		return false;
 	}
