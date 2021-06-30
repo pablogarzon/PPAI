@@ -1,8 +1,11 @@
 package com.dsigrupo12.ppai.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Cargo {
@@ -12,6 +15,16 @@ public class Cargo {
     private String nombre;
     
     private String descripcion;
+    
+    public Cargo() {
+		// TODO Auto-generated constructor stub
+	}
+    
+	public Cargo(String nombre) {
+		this.nombre = nombre;
+	}
+
+
 
 	public String getNombre() {
 		return nombre;

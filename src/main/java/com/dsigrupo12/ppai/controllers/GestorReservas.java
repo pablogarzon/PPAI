@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dsigrupo12.ppai.entities.Empleado;
 import com.dsigrupo12.ppai.entities.Escuela;
-import com.dsigrupo12.ppai.entities.EstadoReserva;
+import com.dsigrupo12.ppai.entities.Estado;
 import com.dsigrupo12.ppai.entities.Exposicion;
 import com.dsigrupo12.ppai.entities.PublicoDestino;
 import com.dsigrupo12.ppai.entities.Sede;
@@ -210,7 +210,7 @@ public class GestorReservas {
 		return 0;
 	}
 	
-	private EstadoReserva buscarEstadoReserva() {
+	private Estado buscarEstadoReserva() {
 		return null;
 	}
 	

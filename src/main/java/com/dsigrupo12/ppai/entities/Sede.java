@@ -24,7 +24,7 @@ public class Sede {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Empleado> empleados;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER)
 	private List<Exposicion> exposiciones;
 	
 	public String getNombre() {
@@ -73,6 +73,7 @@ public class Sede {
 		
 		return result;
 	}
+	
 	public int sumarCantidadVisitantes(LocalDateTime fechaHoraReserva) {
 		// TODO Auto-generated method stub
 		buscarExposicionesFecha(fechaHoraReserva);

@@ -7,8 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Empleado {
@@ -36,13 +36,28 @@ public class Empleado {
 	
 	private LocalDateTime fechaNacimiento;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "cargo_nom")
 	private Cargo cargo;
 	
 	@OneToMany(mappedBy = "empleado")
-	private List<AsignacionVisita> asignacionesVisitas;
+	private List<AsignacionVisita> asignacionesVisitas;	
 	
+	public Empleado() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	public Empleado(int dni, String apellido, String nombre, Cargo cargo) {
+		this.dni = dni;
+		this.apellido = apellido;
+		this.nombre = nombre;
+		this.cargo = cargo;
+	}
+
+
+
 	public int getDni() {
 		return dni;
 	}

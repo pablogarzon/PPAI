@@ -15,6 +15,14 @@ public class PublicoDestino {
 	
 	private String caracteristicas;	
 	
+	public PublicoDestino() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public PublicoDestino(String nombre) {
+		this.nombre = nombre;
+	}
+
 	public int getId() {
 		return id;
 	}
