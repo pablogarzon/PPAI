@@ -10,37 +10,44 @@ import org.springframework.stereotype.Service;
 
 import com.dsigrupo12.ppai.entities.AsignacionVisita;
 import com.dsigrupo12.ppai.entities.CambioEstado;
-import com.dsigrupo12.ppai.entities.Empleado;
 import com.dsigrupo12.ppai.entities.Estado;
-import com.dsigrupo12.ppai.entities.Exposicion;
 import com.dsigrupo12.ppai.entities.ReservaVisita;
-import com.dsigrupo12.ppai.entities.Sede;
-import com.dsigrupo12.ppai.repositories.CambioEstadoRepository;
 import com.dsigrupo12.ppai.repositories.ReservaVisitaRepository;
 
 @Service
 public class ReservaVisitaService {
-
+	
 	@Autowired
 	private ReservaVisitaRepository repository;
 
 	@Autowired
-	private AsignacionVisitaRepository asignacionVisitaRepository;
+	private AsignacionVisitaService asignacionVisitaService;
+
+	@Autowired
+	private CambioEstadoService cambioEstadoService;
 	
 	@Autowired
-	private CambioEstadoRepository cambioEstadoRepository;
+	private EmpleadoService empleadoService;
+	
+	@Autowired
+	private SedeService sedeService;
+
+	@Autowired
+	private ExposicionService exposicionService;
+
 
 	public int buscarUltimoNumero() {
 		return (int) (repository.count() + 1);
 	}
 
-	public ReservaVisita registrar(Sede sede, List<Exposicion> exposiciones, List<Empleado> guias, int cantidadAlumnos,
-			LocalDateTime fechaHoraReserva, long duracion, int ultimoNro, Estado pendiente, LocalDateTime fechaHoraCreacion) {
+	public ReservaVisita registrar(String sede, List<Integer> exposiciones, List<String> guias, int cantidadAlumnos,
+			LocalDateTime fechaHoraReserva, long duracion, int ultimoNro, Estado pendiente,
+			LocalDateTime fechaHoraCreacion) {
 		// TODO Auto-generated method stub
 		ReservaVisita rv = new ReservaVisita();
-		
-		rv.setSede(sede);
-		rv.setExposiciones(exposiciones);
+
+		rv.setSede(sedeService.buscarSede(sede));
+		rv.setExposiciones(exposicionService.buscarExposiciones(exposiciones));
 		rv.setCambioEstado(Collections.singletonList(crearCambioEstado(pendiente, fechaHoraCreacion)));
 		rv.setAsignacionVisita(crearAsignacionGuia(guias, fechaHoraReserva, duracion));
 		rv.setFechaHoraReserva(fechaHoraReserva);
@@ -48,9 +55,9 @@ public class ReservaVisitaService {
 		rv.setCantidadAlumnos(cantidadAlumnos);
 		rv.setDuracionEstimada(duracion);
 		rv.setNumeroReserva(ultimoNro);
-		
+
 		repository.save(rv);
-		
+
 		return rv;
 	}
 
@@ -58,21 +65,22 @@ public class ReservaVisitaService {
 		CambioEstado ce = new CambioEstado();
 		ce.setEstado(pendiente);
 		ce.setFechaHoraInicio(fechaHoraCreacion);
-		return cambioEstadoRepository.save(ce);
+		return cambioEstadoService.save(ce);
 	}
 
-	List<AsignacionVisita> crearAsignacionGuia(List<Empleado> guias, LocalDateTime fechaHoraReserva, long duracion) {
+	List<AsignacionVisita> crearAsignacionGuia(List<String> guias, LocalDateTime fechaHoraReserva, long duracion) {
 		List<AsignacionVisita> asingaciones = new ArrayList<>();
-		
-		for (Empleado empleado : guias) {
+
+		for (String g : guias) {
 			AsignacionVisita av = new AsignacionVisita();
-			av.setEmpleado(empleado);
+
+			av.setEmpleado(empleadoService.findbyName(g));
 			av.setFechaHoraInicio(fechaHoraReserva);
 			av.setFechaHoraFin(fechaHoraReserva.plusMinutes(duracion));
-			
-			asingaciones.add(asignacionVisitaRepository.save(av));
-		} 
-		
+
+			asingaciones.add(asignacionVisitaService.save(av));
+		}
+
 		return asingaciones;
 	}
 }

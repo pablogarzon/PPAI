@@ -168,11 +168,11 @@ public class Empleado {
 		return false;
 	}
 
-	public boolean estaDisponible(LocalDateTime fechaHoraReserva) {
+	public boolean estaDisponible(LocalDateTime fechaHoraReserva, long duracionEstimada) {
 		Boolean estaDisponible = true;
 		
 		for (AsignacionVisita av : asignacionesVisitas) {
-			if (av.getFechaHoraInicio().isBefore(fechaHoraReserva) && av.getFechaHoraFin().isAfter(fechaHoraReserva)) {
+			if (av.getFechaHoraInicio().isBefore(fechaHoraReserva) && av.getFechaHoraFin().isAfter(fechaHoraReserva.plusMinutes(duracionEstimada))) {
 				estaDisponible = false;
 				break;
 			}

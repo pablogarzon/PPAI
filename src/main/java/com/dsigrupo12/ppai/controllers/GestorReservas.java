@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -156,17 +157,22 @@ public class GestorReservas {
 
 	private List<String> obtenerGuias(Sede seleccionada, LocalDateTime fechaHoraReserva, long duracionEstimada) {
 		List<String> result = new ArrayList<>();
-		for (Empleado e : seleccionada.getGuiasDispEnHorario(fechaHoraReserva)) {
+		for (Empleado e : seleccionada.getGuiasDispEnHorario(fechaHoraReserva, duracionEstimada)) {
 			result.add(e.getNombre());
 		}
 		return result;
 	}
 
 	@PostMapping
-	public void tomarConfirmacionReserva(Sede sede, List<Exposicion> exposiciones, List<Empleado> guias,
-			@RequestParam("cantV") int cantVisitantes, @RequestParam("fecha") String fechaIngresada,
-			@RequestParam("hora") String horaIngresada, long duracion) {
-		LocalDateTime fechaHoraReserva = LocalDateTime.parse(fechaIngresada + "T" + horaIngresada + ":00");
+	public ResponseEntity<?> tomarConfirmacionReserva(@RequestBody Map<String, Object> data) {
+		
+		String sede = data.get("sede").toString();
+		List<Integer> exposiciones = (List<Integer>) data.get("exposiciones");
+		List<String> guias = (List<String>) data.get("guias");
+		int cantVisitantes = Integer.parseInt(data.get("cantVisitantes").toString());
+		long duracion = Integer.parseInt(data.get("duracion").toString());
+		
+		LocalDateTime fechaHoraReserva = LocalDateTime.parse(data.get("fecha").toString() + "T" + data.get("hora").toString() + ":00");
 
 		Empleado logueado = buscarEmpleadoLogueado();
 		int ultimoNro = buscarUltimoNroReserva();
@@ -174,6 +180,8 @@ public class GestorReservas {
 		LocalDateTime fhActual = obtenerFechaHoraSistema();
 
 		registrarReserva(sede, exposiciones, guias, cantVisitantes, fechaHoraReserva, duracion, ultimoNro, pendiente, fhActual);
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	private Empleado buscarEmpleadoLogueado() {
@@ -191,7 +199,7 @@ public class GestorReservas {
 		return estadoService.buscarEstadoPendienteConfirmacion();
 	}
 
-	private void registrarReserva(Sede sede, List<Exposicion> exposiciones, List<Empleado> guias, int cantidadAlumnos,
+	private void registrarReserva(String sede, List<Integer> exposiciones, List<String> guias, int cantidadAlumnos,
 			LocalDateTime fechaHoraReserva, long duracion, int ultimoNro, Estado pendiente, LocalDateTime fhActual) {
 		reservaVisitaService.registrar(sede, exposiciones, guias, cantidadAlumnos, fechaHoraReserva, duracion, ultimoNro, pendiente, fhActual);
 	}

@@ -1,4 +1,4 @@
-package com.dsigrupo12.ppai.services;
+package com.dsigrupo12.ppai.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 

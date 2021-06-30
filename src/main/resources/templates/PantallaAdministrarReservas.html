@@ -10,7 +10,10 @@
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bulma.min.js"></script>
     <style>
-        select, input[type=number], input[type=date], input[type=time] {
+        select,
+        input[type=number],
+        input[type=date],
+        input[type=time] {
             min-width: 100px;
             max-width: 700px;
         }
@@ -27,7 +30,7 @@
     </header>
 
     <div class="container">
-        <form action="" class="pt-5">
+        <form action="/" class="pt-5 pb-5" id="form">
 
             <div class="field">
                 <label class="label">Seleccione escuela:</label>
@@ -73,11 +76,11 @@
             </div>
 
             <div class="container is-widescreen">
-                <div class="notification is-info">
+                <div class="notification">
                     <table class="table" id="tblExposiciones">
                         <thead>
                             <tr>
-                            	<th>Seleccionar</th>
+                                <th>Seleccionar</th>
                                 <th>Exposición</th>
                                 <th>Publico Destino</th>
                                 <th>Hora apertura</th>
@@ -95,7 +98,7 @@
                     <input class="input" type="time" placeholder="0" id="txtHoraVisita">
                 </div>
             </div>
-           
+
             <div class="field">
                 <label class="label">Seleccione los guias:</label>
                 <div class="control">
@@ -114,7 +117,7 @@
                         <div class="column is-narrow">
                             <div class="select is-multiple">
                                 <select multiple size="8" id="cmbGuiasSeleccionados">
-                                    
+
                                 </select>
                             </div>
                         </div>
@@ -127,17 +130,23 @@
                 <div class="control">
                     <button class="button is-link">Confirmar</button>
                 </div>
-                <div class="control">
-                    <button class="button is-link is-light">Cancelar</button>
-                </div>
             </div>
-
         </form>
     </div>
-
-
-    </div>
-
+    <div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Notificacion</p>
+            <button class="delete" aria-label="close" id="btnCerrarModal"></button>
+          </header>
+          <section class="modal-card-body" id="mensaje">
+            <!-- Content ... -->
+          </section>
+          <footer class="modal-card-foot">
+          </footer>
+        </div>
+      </div>
     <footer class="footer">
         <div class="content has-text-centered">
             <p>
@@ -164,31 +173,31 @@
         var $btnRemoverGuia = $("#btnRemoverGuia");
         var $tblExposiciones = null;
 
-        $(function() {
+        $(function () {
             $cmbTiposVisita.prop("disabled", true);
-            
+
             $tblExposiciones = $("#tblExposiciones").DataTable({
-            	searching: false,
+                searching: false,
                 paging: false,
                 bInfo: false,
                 info: false,
                 data: [],
                 columns: [
-                	{ data: "id"},
-                    { data: "nombre"},
+                    { data: "id" },
+                    { data: "nombre" },
                     { data: "publicoDestino" },
                     { data: "horaApertura" },
                     { data: "horaCierre" }
                 ],
                 columnDefs: [{
                     'targets': 0,
-                    'render': function (data, type, full, meta){
+                    'render': function (data, type, full, meta) {
                         return '<input type="checkbox" name="id" value="' + data.id + '">';
                     }
                 }]
             });
-            
-			$cmbSede.on("change", tomarSeleccionSede);
+
+            $cmbSede.on("change", tomarSeleccionSede);
             $cmbTiposVisita.on("change", tomarSeleccionTipoVisitas);
             $txtFechaVisita.on("input", tomarSeleccionFechaHoraReserva);
             $txtHoraVisita.on("input", tomarSeleccionFechaHoraReserva);
@@ -198,26 +207,30 @@
             $btnRemoverGuia.on("click", function (e) {
                 moverGuias(e, $cmbGuiasSeleccionados, $cmbGuias);
             });
+            $("#form").on("submit", tomarConfirmacionReserva);
+            $("#btnCerrarModal").on("click", function () {
+                $("#modal").removeClass("is-active");
+            })
         });
 
         function tomarSeleccionSede() {
             $cmbTiposVisita.prop("disabled", false);
         }
 
-        function tomarSeleccionTipoVisitas () {
-                var sede = $cmbSede.val();
-                var tv   = $cmbTiposVisita.val();
+        function tomarSeleccionTipoVisitas() {
+            var sede = $cmbSede.val();
+            var tv = $cmbTiposVisita.val();
 
-                $.ajax({
-                    url: "/exposiciones?sede=" + sede + "&tv=" + tv ,
-                    method: "GET"
-                }).done(presentarExposiciones);
+            $.ajax({
+                url: "/exposiciones?sede=" + sede + "&tv=" + tv,
+                method: "GET"
+            }).done(presentarExposiciones);
         }
 
         function presentarExposiciones(data) {
             $tblExposiciones.clear().draw();
             if (!!data && !!data.exposiciones.length) {
-                $tblExposiciones.rows.add(data.exposiciones).draw();    
+                $tblExposiciones.rows.add(data.exposiciones).draw();
             }
         }
 
@@ -231,7 +244,12 @@
                 $.ajax({
                     url: "/guias?sede=" + sede + "&cantV=" + cantV + "&fecha=" + fecha + "&hora=" + hora + "&expos=1",
                     method: "GET"
-                }).done(presentarGuias);    
+                }).done(presentarGuias)
+                .fail(function (jqXHR) {
+                    $("#mensaje").empty();
+                    $("#mensaje").append("<span>"+ JSON.parse(jqXHR.responseText).error + "</span>");
+                    $("#modal").addClass("is-active");
+                });
             }
         }
 
@@ -245,12 +263,52 @@
         function moverGuias(event, $cmb1, $cmb2) {
             event.preventDefault();
             var seleccionados = $cmb1.val();
-            if(!!seleccionados && !!seleccionados.length) {
+            if (!!seleccionados && !!seleccionados.length) {
                 for (var i = 0; i < seleccionados.length; i++) {
                     $cmb2.append('<option value="' + seleccionados[i] + '">' + seleccionados[i] + '</option>');
                     $cmb1.find('option[value="' + seleccionados[i] + '"]').remove();
                 }
             }
+        }
+
+        function tomarConfirmacionReserva(event) {
+            event.preventDefault();
+
+            var guiasSelecc = [];
+            $("#cmbGuiasSeleccionados > option").each(function (i) {
+                guiasSelecc.push($(this).val());
+            })
+
+            console.log(guiasSelecc);
+
+            var cantV = $txtCantidadVisitantes.val();
+            var fecha = $txtFechaVisita.val();
+            var hora = $txtHoraVisita.val();
+
+            var data = {
+                sede: $cmbSede.val(),
+                exposiciones: [1],
+                guias: guiasSelecc,
+                cantVisitantes: $txtCantidadVisitantes.val(),
+                fecha: $txtFechaVisita.val(),
+                hora: $txtHoraVisita.val(),
+                duracion: 1
+            }
+
+            $.ajax({
+                url: "/",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            }).done(function (params) {
+                $("#mensaje").empty();
+                $("#mensaje").append("<span>Reserva registrada exitosamente</span>");
+                $("#modal").addClass("is-active");
+            }).fail(function () {
+                $("#mensaje").empty();
+                $("#mensaje").append("<span>Reserva registrada exitosamente</span>");
+                $("#modal").addClass("is-active");
+            });
         }
     </script>
 </body>
