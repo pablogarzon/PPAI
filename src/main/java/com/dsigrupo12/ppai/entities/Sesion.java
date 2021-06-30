@@ -3,10 +3,13 @@ package com.dsigrupo12.ppai.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -14,6 +17,7 @@ public class Sesion {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "sesion_id")
 	private int id;
 
 	private LocalDate fechaFin;
@@ -24,7 +28,8 @@ public class Sesion {
 
 	private LocalTime horaInicio;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "usuario_nom")
 	private Usuario usuario;
 
 	public int getId() {

@@ -1,5 +1,6 @@
 package com.dsigrupo12.ppai.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -7,6 +8,7 @@ import javax.persistence.Id;
 public class Cargo {
     
 	@Id
+	@Column(name = "cargo_nom", length = 50)
     private String nombre;
     
     private String descripcion;

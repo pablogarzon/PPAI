@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,15 +16,15 @@ import javax.persistence.OneToMany;
 public class Sede {
 	
 	@Id
-	@Column(name = "nom_sede")
+	@Column(name = "sede_nom", length = 50)
 	private String nombre;
 	
 	private int cantMaximaVisitantes;
 	
-	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Empleado> empleados;
 	
-	@OneToMany(mappedBy = "sede", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Exposicion> exposiciones;
 	
 	public String getNombre() {

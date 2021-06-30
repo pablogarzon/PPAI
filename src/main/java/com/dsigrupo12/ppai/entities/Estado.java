@@ -1,15 +1,19 @@
 package com.dsigrupo12.ppai.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class EstadoReserva {
+public class Estado {
 	
 	@Id
+	@Column(name = "estado_nom", length = 50)
     private String nombre;
 	
     private String descripcion;
+    
+    private String ambito;
 
 	public String getNombre() {
 		return nombre;
@@ -27,11 +31,19 @@ public class EstadoReserva {
 		this.descripcion = descripcion;
 	}
 	
+	public String getAmbito() {
+		return ambito;
+	}
+
+	public void setAmbito(String ambito) {
+		this.ambito = ambito;
+	}
+
 	public boolean esPendienteDeConfirmacion(){
-        if (this.nombre.equals("Pendiente")) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.nombre.equals("PENDIENTE");
     }
+	
+	public boolean esAmbitoReserva() {
+		return this.ambito.equals("RESERVA");
+	}
 }

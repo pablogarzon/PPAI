@@ -1,20 +1,22 @@
 package com.dsigrupo12.ppai.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
 public class Usuario {
 	
 	@Id
+	@Column(name = "usuario_nom", length = 50)
 	private String nombre;
-	
-	private long caducidad;
 	
 	private String contraseña;
 
 	@OneToOne
+	@JoinColumn(name = "dni")
 	private Empleado empleado;
 
 	public String getNombre() {
@@ -23,14 +25,6 @@ public class Usuario {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-
-	public long getCaducidad() {
-		return caducidad;
-	}
-
-	public void setCaducidad(long caducidad) {
-		this.caducidad = caducidad;
 	}
 
 	public String getContraseña() {

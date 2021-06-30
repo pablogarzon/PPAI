@@ -10,7 +10,7 @@ import javax.persistence.Id;
 public class Obra {
 	
 	@Id
-	@Column(name = "id_obra")
+	@Column(name = "obra_id")
 	private int id;
 	
 	private int codigoSensor;

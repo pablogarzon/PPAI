@@ -1,11 +1,13 @@
 package com.dsigrupo12.ppai.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -34,12 +36,12 @@ public class Empleado {
 	
 	private LocalDateTime fechaNacimiento;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cargo_nom")
 	private Cargo cargo;
 	
-	@ManyToOne
-	@JoinColumn(name = "nom_sede")
-	private Sede sede;
+	@OneToMany(mappedBy = "empleado")
+	private List<AsignacionVisita> asignacionesVisitas;
 	
 	public int getDni() {
 		return dni;
@@ -135,14 +137,14 @@ public class Empleado {
 
 	public void setCargo(Cargo cargo) {
 		this.cargo = cargo;
+	}	
+
+	public List<AsignacionVisita> getAsignacionesVisitas() {
+		return asignacionesVisitas;
 	}
 
-	public Sede getSede() {
-		return sede;
-	}
-
-	public void setSede(Sede sede) {
-		this.sede = sede;
+	public void setAsignacionesVisitas(List<AsignacionVisita> asignacionesVisitas) {
+		this.asignacionesVisitas = asignacionesVisitas;
 	}
 
 	public boolean esGuia() {

@@ -2,6 +2,7 @@ package com.dsigrupo12.ppai.entities;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,9 +23,9 @@ public class CambioEstado {
     
 	private LocalDateTime fechaHoraInicio;
 
-    @OneToOne
-	@JoinColumn(name = "Estado_nombre")
-    private EstadoReserva estado;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "estado_nom")
+    private Estado estado;
 
 	public int getId() {
 		return Id;
@@ -50,11 +51,11 @@ public class CambioEstado {
 		this.fechaHoraInicio = fechaHoraInicio;
 	}
 
-	public EstadoReserva getEstado() {
+	public Estado getEstado() {
 		return estado;
 	}
 
-	public void setEstado(EstadoReserva estado) {
+	public void setEstado(Estado estado) {
 		this.estado = estado;
 	}
 }

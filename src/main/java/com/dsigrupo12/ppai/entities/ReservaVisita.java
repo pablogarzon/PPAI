@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 public class ReservaVisita {
 	
 	@Id
-	@Column(name = "NroReserva")
+	@Column(name = "reserva_nro")
 	private int numeroReserva;
 
 	private int cantidadAlumnos;
@@ -33,16 +33,20 @@ public class ReservaVisita {
 	private LocalTime horaInicioReal;
 
 	@OneToOne
-	@JoinColumn(name = "Escuela_nombre")
+	@JoinColumn(name = "escuela_nombre")
 	private Escuela escuela;
 
 	@OneToOne
-	@JoinColumn(name = "AsignacionVisita_Id")
+	@JoinColumn(name = "asignacion_visita_id")
 	private AsignacionVisita asignacionVisita;
 
 	@OneToMany
 	@JoinColumn(name = "cambio_estado_Id")
 	private List<CambioEstado> cambioEstado;
+	
+	@OneToMany
+	@JoinColumn(name = "sede_nom")
+	private List<Sede> sede;
 
 	public int getNumeroReserva() {
 		return numeroReserva;
@@ -130,6 +134,14 @@ public class ReservaVisita {
 
 	public void setCambioEstado(List<CambioEstado> cambioEstado) {
 		this.cambioEstado = cambioEstado;
+	}
+
+	public List<Sede> getSede() {
+		return sede;
+	}
+
+	public void setSede(List<Sede> sede) {
+		this.sede = sede;
 	}
 
 	public  boolean esEnFecha() {

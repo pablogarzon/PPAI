@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -37,14 +37,10 @@ public class Exposicion {
 	@JoinColumn(name = "publico_destino_id")
 	private PublicoDestino publicoDestino;
 
-	@ManyToOne
-	@JoinColumn(name = "nom_sede")
-	private Sede sede;
-
 	@Enumerated(EnumType.STRING)
 	private TipoExposicion tipoExposicion;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "detalle_exposicion_id")
 	private List<DetalleExposicion> detallesExposicion;
 
@@ -102,14 +98,6 @@ public class Exposicion {
 
 	public void setPublicoDestino(PublicoDestino publicoDestino) {
 		this.publicoDestino = publicoDestino;
-	}
-
-	public Sede getSede() {
-		return sede;
-	}
-
-	public void setSede(Sede sede) {
-		this.sede = sede;
 	}
 
 	public TipoExposicion getTipoExposicion() {

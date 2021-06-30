@@ -3,7 +3,6 @@ package com.dsigrupo12.ppai.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 @Entity
 public class PublicoDestino {
@@ -14,11 +13,7 @@ public class PublicoDestino {
 	
 	private String nombre;
 	
-	private String caracteristicas;
-	
-	@OneToOne(mappedBy = "publicoDestino")
-	private Exposicion exposicion;
-	
+	private String caracteristicas;	
 	
 	public int getId() {
 		return id;
@@ -42,13 +37,5 @@ public class PublicoDestino {
 
 	public void setCaracteristicas(String caracteristicas) {
 		this.caracteristicas = caracteristicas;
-	}
-
-	public Exposicion getExposicion() {
-		return exposicion;
-	}
-
-	public void setExposicion(Exposicion exposicion) {
-		this.exposicion = exposicion;
 	}
 }

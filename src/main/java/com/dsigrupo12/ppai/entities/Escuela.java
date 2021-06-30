@@ -1,5 +1,6 @@
 package com.dsigrupo12.ppai.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -7,6 +8,7 @@ import javax.persistence.Id;
 public class Escuela {
 
 	@Id
+	@Column(name = "escuela_nombre",length = 50)
 	private String nombre;
 	
 	private String domicilio;

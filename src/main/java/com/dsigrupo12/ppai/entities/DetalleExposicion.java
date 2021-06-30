@@ -20,7 +20,7 @@ public class DetalleExposicion {
 	private String lugarAsignado;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_obra")
+	@JoinColumn(name = "obra_id")
 	private Obra obra;
 
 	public int getId() {
