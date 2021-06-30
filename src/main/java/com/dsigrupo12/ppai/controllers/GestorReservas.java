@@ -2,14 +2,14 @@ package com.dsigrupo12.ppai.controllers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,28 +19,31 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dsigrupo12.ppai.entities.Empleado;
-import com.dsigrupo12.ppai.entities.Escuela;
 import com.dsigrupo12.ppai.entities.Estado;
 import com.dsigrupo12.ppai.entities.Exposicion;
-import com.dsigrupo12.ppai.entities.PublicoDestino;
 import com.dsigrupo12.ppai.entities.Sede;
-import com.dsigrupo12.ppai.entities.TipoExposicion;
 import com.dsigrupo12.ppai.entities.TipoVisita;
-import com.dsigrupo12.ppai.repositories.EscuelaRepository;
-import com.dsigrupo12.ppai.repositories.SedeRepository;
-
+import com.dsigrupo12.ppai.services.EscuelaService;
+import com.dsigrupo12.ppai.services.EstadoService;
+import com.dsigrupo12.ppai.services.ReservaVisitaService;
+import com.dsigrupo12.ppai.services.SedeService;
 
 @Controller
 @RequestMapping("/")
 public class GestorReservas {
-	
-	private EscuelaRepository escuelas;
-	private SedeRepository sedes;
-	
+
+	private EscuelaService escuelaService;
+	private SedeService sedeService;
+	private ReservaVisitaService reservaVisitaService;
+	private EstadoService estadoService;
+
 	@Autowired
-	public GestorReservas(EscuelaRepository escuelas, SedeRepository sedes) {
-		this.escuelas = escuelas;
-		this.sedes = sedes;
+	public GestorReservas(EscuelaService escuelaService, SedeService sedeService,
+			ReservaVisitaService reservaVisitaService, EstadoService estadoService) {
+		this.escuelaService = escuelaService;
+		this.sedeService = sedeService;
+		this.reservaVisitaService = reservaVisitaService;
+		this.estadoService = estadoService;
 	}
 
 	@GetMapping
@@ -53,23 +56,13 @@ public class GestorReservas {
 	}
 
 	private List<String> buscarEscuelas() {
-		List<String> result = new ArrayList<>();
-		for (Escuela escuela : escuelas.findAll()) {
-			result.add(escuela.getNombre());
-		}
-		result.add("test");
-		return result;
+		return escuelaService.buscarEscuelas();
 	}
-	
+
 	private List<String> buscarSedes() {
-		List<String> result = new ArrayList<>();
-		for (Sede sede : sedes.findAll()) {
-			result.add(sede.getNombre());
-		}
-		result.add("test");
-		return result;
+		return sedeService.buscarSedes();
 	}
-	
+
 	private List<String> buscarTiposVisita() {
 		List<String> result = new ArrayList<>();
 		for (TipoVisita tv : TipoVisita.values()) {
@@ -77,43 +70,28 @@ public class GestorReservas {
 		}
 		return result;
 	}
-	
+
 	@GetMapping(path = "/exposiciones")
-	public @ResponseBody Map<?, ?> tomarSeleccionTipoVisita(
-			@RequestParam("sede") String nombreSede, 
+	public @ResponseBody Map<?, ?> tomarSeleccionTipoVisita(@RequestParam("sede") String nombreSede,
 			@RequestParam("tv") String nombreTV) {
-		
+
 		Map<String, List> exposiciones = new HashMap();
-		
-		Sede seleccionada = new Sede();// sedes.findById(nombreSede).get();		
+
 		TipoVisita tipoVisita = TipoVisita.getByName(nombreTV);
-		
-		PublicoDestino publicoDestino = new PublicoDestino();
-		publicoDestino.setNombre("ATP");
-		Exposicion exposicion = new Exposicion();
-		exposicion.setNombre("arte austriaco");
-		exposicion.setId(1);
-		exposicion.setHoraApertura(LocalTime.now());
-		exposicion.setHoraCierre(LocalTime.now());
-		exposicion.setFechaInicio(LocalDate.now().minusDays(10));
-		exposicion.setFechaFin(LocalDate.now().plusDays(10));
-		exposicion.setPublicoDestino(publicoDestino);
-		exposicion.setTipoExposicion(TipoExposicion.TEMPORAL);
-		seleccionada.setExposiciones(Collections.singletonList(exposicion));
-		
+
 		if (tipoVisita == TipoVisita.POR_EXPOSICION) {
-			exposiciones.put("exposiciones", buscarExposicionesTemporalesVigentes(seleccionada));
+			exposiciones.put("exposiciones", buscarExposicionesTemporalesVigentes(nombreSede));
 		}
-		
+
 		return exposiciones;
 	}
-	
-	private List<Map<String, String>> buscarExposicionesTemporalesVigentes(Sede seleccionada) {
+
+	private List<Map<String, String>> buscarExposicionesTemporalesVigentes(String nombreSede) {
 		List<Map<String, String>> result = new ArrayList<>();
-		
+
 		LocalDate fechaActual = obtenerFechaHoraSistema().toLocalDate();
-		
-		for (Exposicion exposicion : seleccionada.getExposicionesTemporalesVigentes(fechaActual)) {
+
+		for (Exposicion exposicion : sedeService.getExposicionesTemporalesVigentes(nombreSede, fechaActual)) {
 			Map<String, String> expo = new HashMap<>();
 
 			expo.put("id", String.valueOf(exposicion.getId()));
@@ -121,101 +99,100 @@ public class GestorReservas {
 			expo.put("publicoDestino", exposicion.getPublicoDestino().getNombre());
 			expo.put("horaApertura", exposicion.getHoraApertura().toString());
 			expo.put("horaCierre", exposicion.getHoraCierre().toString());
-			
+
 			result.add(expo);
 		}
-		
+
 		return result;
 	}
-	
+
 	private LocalDateTime obtenerFechaHoraSistema() {
 		return LocalDateTime.now();
 	}
-	
+
 	@GetMapping(path = "/guias")
-	public @ResponseBody Map<?, ?> tomarSelecionFechaHoraReserva(
-			@RequestParam("sede") String nombreSede, 
-			@RequestParam("cantV") int cantAsistentesIngresada, 
-			@RequestParam("fecha") String fechaIngresada, 
-			@RequestParam("hora") String horaIngresada) {
-		
+	public ResponseEntity<Map<?, ?>> tomarSelecionFechaHoraReserva(@RequestParam("sede") String nombreSede,
+			@RequestParam("cantV") int cantAsistentesIngresada, @RequestParam("fecha") String fechaIngresada,
+			@RequestParam("hora") String horaIngresada, @RequestParam("expos") int[] exposicionesSeleccionadas) {
+
 		Map<String, Object> result = new HashMap<>();
-		
+
+		Sede seleccionada = sedeService.buscarSede(nombreSede);
+
 		LocalDateTime fechaHoraReserva = LocalDateTime.parse(fechaIngresada + "T" + horaIngresada + ":00");
-		
-		/*Double duracionEstimada = calcularDuracionEstimada(seleccionada);
-		
-		verificarCapacidadMaximaSede(seleccionada, cantAsistentesIngresada, fechaHoraReserva);	
-		
-		int cantGuias = calcularCantidadGuiasNecesarios(seleccionada, cantAsistentesIngresada);		
-		
-		List<Empleado> guias = obtenerGuias(seleccionada, fechaHoraReserva, duracionEstimada);
-		*/
-		
-		int cantGuias = 2;
-		
-		List<String> guias = new ArrayList<>();
-		guias.add("Juan Arango");
-		guias.add("Camila Sierra");
-		guias.add("Jorge Perez");
-		guias.add("Caren Margaretti");
-		guias.add("Antonella Gold");
-		guias.add("Claudio Capputo");
-		
+
+		long duracionEstimada = calcularDuracionEstimada(seleccionada, exposicionesSeleccionadas);
+
+		boolean noSobrepasa = verificarCapacidadMaximaSede(seleccionada, cantAsistentesIngresada);
+
+		if (noSobrepasa) {
+			result.put("error", "Cantidad visitiantes sobrepasada");
+			return new ResponseEntity<Map<?, ?>>(result, HttpStatus.BAD_REQUEST);
+		}
+
+		int cantGuias = calcularCantidadGuiasNecesarios(seleccionada, cantAsistentesIngresada);
+
+		List<String> guias = obtenerGuias(seleccionada, fechaHoraReserva, duracionEstimada);
+
 		result.put("cantidadNecesaria", cantGuias);
 		result.put("guias", guias);
-		
-		return result;
+
+		return new ResponseEntity<Map<?, ?>>(result, HttpStatus.OK);
 	}
-	
-	private Double calcularDuracionEstimada(Sede seleccionada) {
-		return seleccionada.calcularDuracionEstimada(); 
+
+	private long calcularDuracionEstimada(Sede seleccionada, int[] exposicionesSeleccionadas) {
+		return seleccionada.calcularDuracionEstimada(exposicionesSeleccionadas);
 	}
-	
-	private boolean verificarCapacidadMaximaSede(Sede seleccionada, int cantIngresada, LocalDateTime fechaHoraReserva) {
+
+	private boolean verificarCapacidadMaximaSede(Sede seleccionada, int cantIngresada) {
 		int cantMax = seleccionada.getCantMaximaVisitantes();
-		if(cantMax <= cantIngresada) {
-			int sumaAsistentesOtrasExpoParaLaFecha = seleccionada.sumarCantidadVisitantes(fechaHoraReserva);
-			return sumaAsistentesOtrasExpoParaLaFecha <= cantIngresada;
-		}
-		return false;
+		return cantMax <= cantIngresada;
 	}
-	
-	private int calcularCantidadGuiasNecesarios(Sede seleccionada, int cantAsistentesIngresada) {		
-		
-		return 0;
+
+	private int calcularCantidadGuiasNecesarios(Sede seleccionada, int cantAsistentesIngresada) {
+		int cant = (int) Math.ceil(seleccionada.getCantMaximaVisitantes() / seleccionada.getCantMaxPorGuia());
+		return cant;
 	}
-	
-	private List<String> obtenerGuias(Sede seleccionada, LocalDateTime fechaHoraReserva, Double duracionEstimada) {
+
+	private List<String> obtenerGuias(Sede seleccionada, LocalDateTime fechaHoraReserva, long duracionEstimada) {
 		List<String> result = new ArrayList<>();
 		for (Empleado e : seleccionada.getGuiasDispEnHorario(fechaHoraReserva)) {
 			result.add(e.getNombre());
 		}
 		return result;
 	}
-	
+
 	@PostMapping
-	public void tomarConfirmacionReserva() {
-		buscarEmpleadoLogueado();
-		buscarUltimoNroReserva();
-		buscarEstadoReserva();
-		registrarReserva();
+	public void tomarConfirmacionReserva(Sede sede, List<Exposicion> exposiciones, List<Empleado> guias,
+			@RequestParam("cantV") int cantVisitantes, @RequestParam("fecha") String fechaIngresada,
+			@RequestParam("hora") String horaIngresada, long duracion) {
+		LocalDateTime fechaHoraReserva = LocalDateTime.parse(fechaIngresada + "T" + horaIngresada + ":00");
+
+		Empleado logueado = buscarEmpleadoLogueado();
+		int ultimoNro = buscarUltimoNroReserva();
+		Estado pendiente = buscarEstadoNvaReserva();
+		LocalDateTime fhActual = obtenerFechaHoraSistema();
+
+		registrarReserva(sede, exposiciones, guias, cantVisitantes, fechaHoraReserva, duracion, ultimoNro, pendiente, fhActual);
 	}
-	
-	private String buscarEmpleadoLogueado() {
-		return null;
+
+	private Empleado buscarEmpleadoLogueado() {
+		Empleado e = new Empleado();
+		e.setNombre("Jose");
+		e.setApellido("Luque");
+		return new Empleado();
 	}
-	
+
 	private int buscarUltimoNroReserva() {
-		return 0;
+		return reservaVisitaService.buscarUltimoNumero();
 	}
-	
-	private Estado buscarEstadoReserva() {
-		return null;
+
+	private Estado buscarEstadoNvaReserva() {
+		return estadoService.buscarEstadoPendienteConfirmacion();
 	}
-	
-	private void registrarReserva() {
-		
+
+	private void registrarReserva(Sede sede, List<Exposicion> exposiciones, List<Empleado> guias, int cantidadAlumnos,
+			LocalDateTime fechaHoraReserva, long duracion, int ultimoNro, Estado pendiente, LocalDateTime fhActual) {
+		reservaVisitaService.registrar(sede, exposiciones, guias, cantidadAlumnos, fechaHoraReserva, duracion, ultimoNro, pendiente, fhActual);
 	}
-	
 }

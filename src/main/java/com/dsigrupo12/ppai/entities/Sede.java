@@ -1,8 +1,8 @@
 package com.dsigrupo12.ppai.entities;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -20,6 +20,8 @@ public class Sede {
 	private String nombre;
 	
 	private int cantMaximaVisitantes;
+	
+	private int cantMaxPorGuia;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Empleado> empleados;
@@ -39,6 +41,12 @@ public class Sede {
 	public void setCantMaximaVisitantes(int cantMaximaVisitantes) {
 		this.cantMaximaVisitantes = cantMaximaVisitantes;
 	}
+	public int getCantMaxPorGuia() {
+		return cantMaxPorGuia;
+	}
+	public void setCantMaxPorGuia(int cantMaxPorGuia) {
+		this.cantMaxPorGuia = cantMaxPorGuia;
+	}
 	public List<Empleado> getEmpleados() {
 		return empleados;
 	}
@@ -52,48 +60,30 @@ public class Sede {
 		this.exposiciones = exposiciones;
 	}
 	
-	public List<Exposicion> getExposicionesTemporalesVigentes(LocalDate fecha) {
-		List<Exposicion> exposicionesVigentes = new ArrayList<>();
-		for (Exposicion exposicion: this.exposiciones) {
-			if (exposicion.getFechaInicio().isBefore(fecha) && exposicion.getFechaFin().isAfter(fecha)) {
-				if(exposicion.getTipoExposicion() == TipoExposicion.TEMPORAL) {
-					exposicionesVigentes.add(exposicion);
+	public long calcularDuracionEstimada(int[] exposicionesSeleccionadas) {
+		long result = 0L;
+		
+		for (Exposicion exposicion : this.getExposiciones()) {
+			for (int i = 0; i < exposicionesSeleccionadas.length; i++) {
+				if(exposicionesSeleccionadas[i] == exposicion.getId()) {
+					result += exposicion.calcularDuracionEstimada();
 				}
 			}
-		}
-		return exposicionesVigentes;
-	}
-	
-	public Double calcularDuracionEstimada() {
-		Double result = 0.0;
-		
-		for (Exposicion exposicion : this.exposiciones) {
-			result += exposicion.calcularDuracionEstimada();
+			
 		}
 		
 		return result;
 	}
 	
-	public int sumarCantidadVisitantes(LocalDateTime fechaHoraReserva) {
-		// TODO Auto-generated method stub
-		buscarExposicionesFecha(fechaHoraReserva);
-		
-		return 0;
-	}
-	
-	private List<Exposicion> buscarExposicionesFecha(LocalDateTime fechaHoraReserva) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	public List<Empleado> getGuiasDispEnHorario(LocalDateTime fechaHoraReserva) {
-		// TODO Auto-generated method stub
+		List<Empleado> result = new ArrayList<>();
+		
 		for (Empleado empleado : empleados) {
-			if(empleado.esGuia()) {
-				if (empleado.estaDisponible(fechaHoraReserva)) {
-					
-				}
+			if(empleado.esGuia() && empleado.estaDisponible(fechaHoraReserva)) {
+				result.add(empleado);
 			}
 		}
-		return null;
+		
+		return result;
 	}
 }

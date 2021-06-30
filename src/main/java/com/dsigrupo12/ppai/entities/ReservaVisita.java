@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -36,17 +37,21 @@ public class ReservaVisita {
 	@JoinColumn(name = "escuela_nombre")
 	private Escuela escuela;
 
-	@OneToOne
+	@OneToMany
 	@JoinColumn(name = "asignacion_visita_id")
-	private AsignacionVisita asignacionVisita;
+	private List<AsignacionVisita> asignacionVisita;
 
 	@OneToMany
 	@JoinColumn(name = "cambio_estado_Id")
 	private List<CambioEstado> cambioEstado;
 	
-	@OneToMany
+	@ManyToOne
 	@JoinColumn(name = "sede_nom")
-	private List<Sede> sede;
+	private Sede sede;
+	
+	@OneToMany
+	@JoinColumn(name = "exposicion_id")
+	private List<Exposicion> exposiciones;
 
 	public int getNumeroReserva() {
 		return numeroReserva;
@@ -119,15 +124,15 @@ public class ReservaVisita {
 	public void setEscuela(Escuela escuela) {
 		this.escuela = escuela;
 	}
-
-	public AsignacionVisita getAsignacionVisita() {
+	
+	public List<AsignacionVisita> getAsignacionVisita() {
 		return asignacionVisita;
 	}
 
-	public void setAsignacionVisita(AsignacionVisita asignacionVisita) {
+	public void setAsignacionVisita(List<AsignacionVisita> asignacionVisita) {
 		this.asignacionVisita = asignacionVisita;
 	}
-	
+
 	public List<CambioEstado> getCambioEstado() {
 		return cambioEstado;
 	}
@@ -136,11 +141,19 @@ public class ReservaVisita {
 		this.cambioEstado = cambioEstado;
 	}
 
-	public List<Sede> getSede() {
+	public List<Exposicion> getExposiciones() {
+		return exposiciones;
+	}
+
+	public void setExposiciones(List<Exposicion> exposiciones) {
+		this.exposiciones = exposiciones;
+	}
+
+	public Sede getSede() {
 		return sede;
 	}
 
-	public void setSede(List<Sede> sede) {
+	public void setSede(Sede sede) {
 		this.sede = sede;
 	}
 

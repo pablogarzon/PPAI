@@ -3,7 +3,6 @@ package com.dsigrupo12.ppai.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -170,7 +169,14 @@ public class Empleado {
 	}
 
 	public boolean estaDisponible(LocalDateTime fechaHoraReserva) {
-		// TODO Auto-generated method stub
-		return false;
+		Boolean estaDisponible = true;
+		
+		for (AsignacionVisita av : asignacionesVisitas) {
+			if (av.getFechaHoraInicio().isBefore(fechaHoraReserva) && av.getFechaHoraFin().isAfter(fechaHoraReserva)) {
+				estaDisponible = false;
+				break;
+			}
+		}
+		return estaDisponible;
 	}
 }

@@ -47,7 +47,7 @@ public class DetalleExposicion {
 		this.obra = obra;
 	}
 
-	public double buscarDuracionExtObras() {
+	public long buscarDuracionExtObras() {
 		return this.obra.getDuracionExtendida();
 	}
 }

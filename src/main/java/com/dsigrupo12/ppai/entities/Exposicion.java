@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -20,6 +22,7 @@ import javax.persistence.Table;
 public class Exposicion {
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "exposicion_id")
 	private int id;
 
@@ -116,8 +119,8 @@ public class Exposicion {
 		this.detallesExposicion = detallesExposicion;
 	}
 
-	public Double calcularDuracionEstimada() {
-		Double total = 0.0;
+	public long calcularDuracionEstimada() {
+		long total = 0L;
 		for (DetalleExposicion detalleExposicion : detallesExposicion) {
 			total += detalleExposicion.buscarDuracionExtObras();
 		}

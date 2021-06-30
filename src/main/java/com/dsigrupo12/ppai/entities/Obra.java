@@ -19,9 +19,9 @@ public class Obra {
 	
 	private String descripcion;
 	
-	private Double duracionExtendida;
+	private long duracionExtendida;
 	
-	private Double duracionResumida;
+	private long duracionResumida;
 	
 	private LocalDate fechaCreacion;
 	
@@ -55,16 +55,16 @@ public class Obra {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public Double getDuracionExtendida() {
+	public long getDuracionExtendida() {
 		return duracionExtendida;
 	}
-	public void setDuracionExtendida(Double duracionExtendida) {
+	public void setDuracionExtendida(long duracionExtendida) {
 		this.duracionExtendida = duracionExtendida;
 	}
-	public Double getDuracionResumida() {
+	public long getDuracionResumida() {
 		return duracionResumida;
 	}
-	public void setDuracionResumida(Double duracionResumida) {
+	public void setDuracionResumida(long duracionResumida) {
 		this.duracionResumida = duracionResumida;
 	}
 	public LocalDate getFechaCreacion() {
